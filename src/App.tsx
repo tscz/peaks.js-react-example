@@ -1,14 +1,8 @@
-import { useRef } from "react";
 import "./App.css";
 import { usePeaks } from "peaks.js-react";
 
 function App() {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const waveformRef = useRef<HTMLDivElement>(null);
-
-  const { peaks, loading, error } = usePeaks({
-    audioRef,
-    waveformRef,
+  const { peaks, loading, error, waveformRef, audioRef } = usePeaks({
     options: {
       webAudio: {
         audioContext: new AudioContext(),
