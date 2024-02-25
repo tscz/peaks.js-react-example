@@ -1,5 +1,4 @@
-import React, { useRef } from "react";
-import logo from "./logo.svg";
+import { useRef } from "react";
 import "./App.css";
 import { usePeaks } from "peaks.js-react";
 
@@ -10,7 +9,11 @@ function App() {
   const { peaks, loading, error } = usePeaks({
     audioRef,
     waveformRef,
-    options: {},
+    options: {
+      webAudio: {
+        audioContext: new AudioContext(),
+      },
+    },
   });
 
   return (
@@ -19,13 +22,34 @@ function App() {
       <div
         id="waveform"
         ref={waveformRef}
-        style={{ width: "400px", height: "200px" }}
+        style={{ width: "100%", height: "200px" }}
       ></div>
-      <audio id="audio" ref={audioRef}></audio>
+      <audio controls id="audio" ref={audioRef}>
+        <source
+          src={`${process.env.PUBLIC_URL}/250856__joshuaempyre__epic-orchestra-loop.wav`}
+          type="audio/wav"
+        />
+        Your browser does not support the audio element.
+      </audio>
       {!!loading && <p>Loading</p>}
       {!!error && <p>Error: {error.message}</p>}
       {!error && !loading && !!peaks && (
-        <p>{`current zoom:${peaks.zoom.getZoom()}`}</p>
+        <>
+          <p>{`current zoom:${peaks.zoom.getZoom()}`}</p>
+          <button onClick={() => peaks.player.play()}>play</button>
+          <button onClick={() => peaks.player.pause()}>pause</button>
+          <button
+            onClick={() =>
+              peaks.views.getView("overview")?.setWaveformColor({
+                linearGradientStart: Math.random() * 100,
+                linearGradientEnd: Math.random() * 100,
+                linearGradientColorStops: ["green", "red"],
+              })
+            }
+          >
+            change waveform color
+          </button>
+        </>
       )}
     </div>
   );
